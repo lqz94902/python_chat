@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*
+#!usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import socket
 import threading#多线程模块
@@ -30,14 +31,15 @@ def client_accept(sock):
 
 
 nick=raw_input('input your nickname:')
-ip=raw_input('input the server ip address')
-port=1254#端口
+ip=raw_input('input the server IP address of your chatromm:')
+
+port=8889#端口
 sock=socket.socket()#创建套接字
-sock.connect((ip,port))#连接
+sock.connect((ip,port))
 
 sock.send(nick)#将用户名发送到服务端
 #发送、接收多线程
 th_send=threading.Thread(target=client_send,args=(sock,))#(sock,)来表示元组
 th_send.start()#启动
-th_accept=threading.Thread(target=client_accept,args=())
+th_accept=threading.Thread(target=client_accept,args=(sock,))
 th_accept.start()

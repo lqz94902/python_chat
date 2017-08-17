@@ -1,19 +1,20 @@
-# -*- coding: utf-8 -*
+#!usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import socket
 import threading#多线程模块
 
 con=threading.Condition()#线程同步 锁
-host=raw_input('input the servers ip address:')
-port=1254
+host=raw_input('input the server IP address:')
+port=8889
 data=''     #文本
 
 s=socket.socket()   #创建了一个服务
 print ('socket created')
-s.bind((host,port))#绑定
-s.listen(1)#监听连接
+s.bind((host,port))
+s.listen(2)#监听连接
 
-print 'socket new listening'
+print 'socket listening'
 
 def NotifyAll(sss):
     global data
@@ -35,7 +36,7 @@ def threadOut(conn,nick):
                     con.release()
                     return
 
-def ThreadIn(conn,nick):
+def threadIn(conn,nick):
     while 1:
         try:
             temp=conn.recv(1024)
@@ -52,9 +53,10 @@ def ThreadIn(conn,nick):
 
 while 1:        #为了一直监听
     conn,addr=s.accept()    #接收到连接了
-    print 'Connectd with'+addr[0]+':'+str(addr[1])
+    print 'Connectd with '+addr[0]+':'+str(addr[1])
     nick=conn.recv(1024)
-    NotifyAll('Welcome'+':'+'to the room!')
+    NotifyAll('Welcome '+nick+' to the room!')
     print data
     conn.send(data)
     threading.Thread(target=threadOut,args=(conn,nick)).start()
+    threading.Thread(target=threadIn,args=(conn,nick)).start()
